@@ -20,10 +20,10 @@ from evaluation import accuracy_name
 
 #%% Variables
 
-train_size=1000
+train_size=100000
 valid_size=10
 test_size=10
-num_epochs = 10
+num_epochs = 200
 
 # character to number
 alphabets = {"A":1,"B":2,"C":3,"D":4,"E":5,"F":6,"G":7,"H":8,"I":9,"J":10,"K":11,
@@ -81,7 +81,7 @@ decoded = ctc_decode(encoded)
 identity_train = [name for name in train_data["IDENTITY"]]
 accuracy_train = accuracy_name(decoded, identity_train)    #data = decoded train
     
-
+'''
 # validation:
 identity_valid = [name for name in valid_data["IDENTITY"]]
 permuted_val = torch.permute(valid_x_new, (0,3,2,1))
@@ -92,7 +92,7 @@ val_dec = ctc_decode(val_dec)
 accuracy_validation = accuracy_name(val_dec, identity_valid)
 
 # adapt hyperparameter
-
+'''
 
 
 
