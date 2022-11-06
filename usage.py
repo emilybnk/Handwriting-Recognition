@@ -20,11 +20,12 @@ from evaluation import accuracy_name
 
 #%% Variables
 
-train_size=100000
+train_size=100
 valid_size=10
 test_size=10
-num_epochs = 200
+num_epochs = 2
 
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu") 
 # character to number
 alphabets = {"A":1,"B":2,"C":3,"D":4,"E":5,"F":6,"G":7,"H":8,"I":9,"J":10,"K":11,
            "L":12,"M":13,"N":14,"O":15,"P":16,"Q":17,"R":18,"S":19,"T":20,"U":21,
@@ -34,7 +35,6 @@ alphabets = {"A":1,"B":2,"C":3,"D":4,"E":5,"F":6,"G":7,"H":8,"I":9,"J":10,"K":11
 num_of_characters = len(alphabets) + 1  # +1 for ctc pseudo blank
 num_of_timesteps = 64                   # length of predicted labels (for images to be divided into 64 time steps) arbitrary     
 
- 
 #%% Preprocessing
 
 path = (Path().home()/"OneDrive"/"Studium"/"Master"/"Semester 0"/"Deep Learning in NLP"/"Data")
@@ -44,8 +44,8 @@ valid_data = read_labels("written_name_validation_v2.csv")
 test_data = read_labels("written_name_test_v2.csv")
 
 # use encode function from read_data2 file
-train_x_new = encode("train", train_size, train_data)
-valid_x_new = encode("validation", valid_size, valid_data)
+train_x_new = encode("train", train_size, train_data, device)
+valid_x_new = encode("validation", valid_size, valid_data, device)
 
 
 #%% Variables #2
@@ -57,16 +57,16 @@ min_str_len = min_str(train_data, train_size,test_data, test_size,valid_data, va
 
 #%% Encode
 
-train_y = encode_labels(train_size, train_data, max_str_len, alphabets)
-train_y = torch.tensor(train_y, dtype=torch.float32)
+train_y = encode_labels(train_size, train_data, max_str_len, alphabets, device)
+train_y = torch.tensor(train_y, dtype=torch.float32).to(device)
 #print(train_y.size())    
 
 #%% Model
-cm = CharModel(29) #29 characters in alphabets
+cm = CharModel(29).to(device) #29 characters in alphabets
 
 #%% Training
 x_pred = train_loss(num_of_timesteps, train_size, train_x_new,
-               max_str_len,train_y, cm, num_epochs, train_data)
+               max_str_len,train_y, cm, num_epochs, train_data, device)
 
 #%% Decode
 

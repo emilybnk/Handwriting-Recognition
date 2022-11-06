@@ -32,7 +32,7 @@ def preprocess(img):
 
 
 
-def encode(path, size, data):
+def encode(path, size, data, device):
     # encode images to numpy arrays
     # von kaggle: https://www.kaggle.com/code/samfc10/handwriting-recognition-using-crnn-in-keras/notebook#Check-model-performance-on-validation-set
     data_x = []
@@ -46,7 +46,7 @@ def encode(path, size, data):
         data_x.append(image)
         
     data_x = np.array(data_x).reshape(-1, 256, 64, 1)
-    data_x = torch.tensor(data_x, dtype=torch.float32)
+    data_x = torch.tensor(data_x, dtype=torch.float32).to(device)
     print(data_x.shape)
     return data_x
 

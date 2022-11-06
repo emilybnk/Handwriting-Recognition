@@ -13,14 +13,14 @@ import numpy as np
 
 
 def train_loss(num_of_timesteps, train_size, train_x_new,
-               max_str_len,train_y, cm, num_epochs, train_data):
+               max_str_len,train_y, cm, num_epochs, train_data, device):
     
     loss = nn.CTCLoss(blank=0)
     optimizer = torch.optim.Adam(cm.parameters(), lr=0.0001)
     train_label_len = np.zeros((train_size, 1), dtype=int) 
     for i in range(train_size):
         train_label_len[i] = len(train_data.loc[i, 'IDENTITY'])
-    train_label_len_tensor = torch.tensor(train_label_len, dtype=torch.long)    
+    train_label_len_tensor = torch.tensor(train_label_len, dtype=torch.long).to(device)   
     train_input_len = np.ones([train_size, 1]) * (num_of_timesteps-2)
     
     
@@ -38,7 +38,7 @@ def train_loss(num_of_timesteps, train_size, train_x_new,
 
         new_targets = train_y
 
-        new_input_lengths = torch.tensor(train_input_len, dtype=torch.int32)
+        new_input_lengths = torch.tensor(train_input_len, dtype=torch.int32).to(device)
         new_target_lengths = train_label_len_tensor
 
         new_calculated_loss = loss(permuted_predictions, new_targets, new_input_lengths, new_target_lengths)

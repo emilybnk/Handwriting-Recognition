@@ -36,7 +36,7 @@ def label_to_num(label, alphabets):
    
 
 
-def encode_labels(size, data, max_str_len,alphabets):
+def encode_labels(size, data, max_str_len,alphabets, device):
     # placeholder for real labels
     label_placeholder = np.ones([size, max_str_len]) * 0      
     # placeholder is filled with real data in encoded form
@@ -44,6 +44,6 @@ def encode_labels(size, data, max_str_len,alphabets):
         # -1 remains if label is shorter than max_str_len
         label_placeholder[i, 0:len(data.loc[i, 'IDENTITY'])] = label_to_num(data.loc[i, 'IDENTITY'],alphabets) 
     # convert labels to torch tensor
-    encoded_labels = torch.tensor(label_placeholder, dtype=torch.float32)
+    encoded_labels = torch.tensor(label_placeholder, dtype=torch.float32).to(device)
     return encoded_labels
      
