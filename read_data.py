@@ -32,12 +32,13 @@ def preprocess(img):
 
 
 
-def encode(path, size, data, device):
+def encode(path, size, data, device):#, args):
     # encode images to numpy arrays
     # von kaggle: https://www.kaggle.com/code/samfc10/handwriting-recognition-using-crnn-in-keras/notebook#Check-model-performance-on-validation-set
     data_x = []
     for i in range(size):
         path = (Path().home()/"OneDrive"/"Studium"/"Master"/"Semester 0"/"Deep Learning in NLP"/"Data"/path)
+        #path = args.command_line_path
         os.chdir(path)
         image = np.array(Image.open(data.loc[i,'FILENAME']).convert('L'))
         image = preprocess(image)

@@ -4,11 +4,14 @@ Created on Mon Sep 19 18:23:07 2022
 
 @author: emibu
 """
-from read_data import encode
+
 import os
 from pathlib import Path
 import torch
+import argparse
+
 from read_data import read_labels
+from read_data import encode
 from encode import max_str
 from encode import min_str
 from encode import encode_labels
@@ -18,12 +21,21 @@ from decode import decode_preds
 from decode import ctc_decode
 from evaluation import accuracy_name
 
+#%% not working yet
+'''
+parser = argparse.ArgumentParser(description='Read the path where the data is stored from the argument line')
+parser.add_argument('--command_line_path', 
+                    type=Path,
+                    default=Path().home()/"OneDrive"/"Studium"/"Master"/"Semester 0"/"Deep Learning in NLP"/"Data", 
+                    help='Stores path of data as pathlib.Path in "command_line_path" variable. If none is given, default is used.')
+args = parser.parse_args()
+'''
 #%% Variables
 
-train_size=100
+train_size = 100000
 valid_size=10
 test_size=10
-num_epochs = 2
+num_epochs = 200
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu") 
 # character to number
@@ -38,14 +50,15 @@ num_of_timesteps = 64                   # length of predicted labels (for images
 #%% Preprocessing
 
 path = (Path().home()/"OneDrive"/"Studium"/"Master"/"Semester 0"/"Deep Learning in NLP"/"Data")
+#path = args.command_line_path
 os.chdir(path)
 train_data = read_labels("written_name_train_v2.csv")
 valid_data = read_labels("written_name_validation_v2.csv")
 test_data = read_labels("written_name_test_v2.csv")
 
 # use encode function from read_data2 file
-train_x_new = encode("train", train_size, train_data, device)
-valid_x_new = encode("validation", valid_size, valid_data, device)
+train_x_new = encode("train", train_size, train_data, device)#, args)
+valid_x_new = encode("validation", valid_size, valid_data, device)#, args)
 
 
 #%% Variables #2
