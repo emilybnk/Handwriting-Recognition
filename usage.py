@@ -94,8 +94,8 @@ decoded = ctc_decode(encoded)
 identity_train = [name for name in train_data["IDENTITY"]]
 accuracy_train = accuracy_name(decoded, identity_train)    #data = decoded train
     
-print("decoded names: ", decoded)
-print("accurancy: ", accuracy_train)
+print("first 100 decoded names: ", decoded[0:100])
+print("accuracy: ", accuracy_train)
 '''
 # validation:
 identity_valid = [name for name in valid_data["IDENTITY"]]
