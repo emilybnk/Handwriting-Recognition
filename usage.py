@@ -30,12 +30,13 @@ parser.add_argument('--command_line_path',
                     help='Stores path of data as pathlib.Path in "command_line_path" variable. If none is given, default is used.')
 args = parser.parse_args()
 '''
+
 #%% Variables
 
-train_size = 100000
-valid_size=10
-test_size=10
-num_epochs = 200
+train_size = 30000
+valid_size = 3000
+test_size = 300
+num_epochs = 100
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu") 
 # character to number
@@ -78,12 +79,15 @@ train_y = torch.tensor(train_y, dtype=torch.float32).to(device)
 cm = CharModel(29).to(device) #29 characters in alphabets
 
 #%% Training
-x_pred = train_loss(num_of_timesteps, train_size, train_x_new,
+train_loss(num_of_timesteps, train_size, train_x_new,
                max_str_len,train_y, cm, num_epochs, train_data, device)
 
 #%% Decode
+train_data_permuted = torch.permute(train_x_new, (0,3,2,1))
+predictions = cm(train_data_permuted)  #use the CharModel
+predictions = predictions[:, 2:, :]
 
-encoded = decode_preds(x_pred, train_size, alphabets)
+encoded = decode_preds(predictions, train_size, alphabets)
 # >> result is a list of strings of the form "AAAA°NNN°NNNNNN°AA" (name "Anna", uncleaned)
 
 # >> Derive “Anna” from “"AAAA°NNN°NNNNNN°AA"

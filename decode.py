@@ -17,8 +17,11 @@ def num_to_label(num, alphabets):
         ret = dict_list[num-1]
     return ret
 
+
 def decode_preds(preds, size, alphabets):
     # based on https://www.youtube.com/watch?v=IcLEJB2pY2Y&t=3366s
+    #preds = torch.stack(preds)
+    print(preds.shape)
     preds = torch.softmax(preds, 2)    # convert the tensor to a tensor of probabilities
     preds = torch.argmax(preds, 2)     # pick the maximum values of the tensor
     preds = preds.detach().cpu().numpy()   # convert to numpy array
@@ -27,6 +30,7 @@ def decode_preds(preds, size, alphabets):
         temp = []
         # convert each array back to a label:
         for k in preds[j]:
+            #print("k", k)
             #k = k-1             # -1: pseudo blank for ctc
             temp.append(num_to_label(k, alphabets))
         tp = "".join(temp)
