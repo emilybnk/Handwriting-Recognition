@@ -16,6 +16,7 @@ from encode import max_str
 from encode import min_str
 from encode import encode_labels
 from Model import CharModel
+from train import create_mini_batches
 from train import train_loss
 from decode import decode_preds
 from decode import ctc_decode
@@ -83,11 +84,38 @@ train_loss(num_of_timesteps, train_size, train_x_new,
                max_str_len,train_y, cm, num_epochs, train_data, device)
 
 #%% Decode
-train_data_permuted = torch.permute(train_x_new, (0,3,2,1))
-predictions = cm(train_data_permuted)  #use the CharModel
-predictions = predictions[:, 2:, :]
 
-encoded = decode_preds(predictions, train_size, alphabets)
+# Folgende 3 Zeilen problematisch, weil predictions für kompletten Datensatz gemacht werden
+train_data_permuted1 = torch.permute(train_x_new, (0,3,2,1))
+predictions = cm(train_data_permuted1)  #use the CharModel
+predictions1 = predictions[:, 2:, :]
+# Ende problematische Zeilen
+
+# NEU: Predictions für Mini-Batches nacheinander erstellen:
+# Ganz oben in dieser Datei einfügen!!!: " from train import create_mini_batches  "
+
+mini_x_for_pred = create_mini_batches(train_x_new, 25)
+mini_y_for_pred = create_mini_batches(train_y, 25)
+
+predictions_list = []
+index = 0
+for kl in range(len(mini_x_for_pred)):
+    train_data_permuted = torch.permute(mini_x_for_pred[index], (0,3,2,1))
+    predictions = cm(train_data_permuted)  #use the CharModel
+    predictions = predictions[:, 2:, :]
+    #permuted_predictions = torch.permute(predictions, (1,0,2))
+    predictions_list.append(predictions)
+
+    index +=1  
+
+# Der weitere Code in unserem Projekt (z.B. decode_preds usw.) erwartet die Predictions in Form eines Tensors, wir haben aber jetzt 
+# eine Liste von Tensoren. Also, am besten die Liste wieder in einen großen Tensor umwandeln. Das müsste durch Stacken gehen.
+# Im weiteren Code Name der Variable ändern: > "predictions" >> "tensor_predictions"
+
+tensor_predictions = torch.stack(predictions_list)
+tensor_predictions = tensor_predictions.view(tensor_predictions.size(0)*tensor_predictions.size(1),tensor_predictions.size(2),tensor_predictions.size(3))
+
+encoded = decode_preds(tensor_predictions, train_size, alphabets)
 # >> result is a list of strings of the form "AAAA°NNN°NNNNNN°AA" (name "Anna", uncleaned)
 
 # >> Derive “Anna” from “"AAAA°NNN°NNNNNN°AA"
