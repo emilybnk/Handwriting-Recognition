@@ -51,7 +51,8 @@ num_of_timesteps = 64                   # length of predicted labels (for images
 
 #%% Preprocessing
 
-path = (Path().home()/"OneDrive"/"Studium"/"Master"/"Semester 0"/"Deep Learning in NLP"/"Data")
+path = (Path().home()/"data"/"rafael")
+
 #path = args.command_line_path
 os.chdir(path)
 train_data = read_labels("written_name_train_v2.csv")
