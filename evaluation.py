@@ -16,5 +16,3 @@ def accuracy_name(decoded_data, identity_train):
 
 # def accuracy_letters    --> upcoming
     # how much of one name is predicted correctly
-    
-print("hello world")
