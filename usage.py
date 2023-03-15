@@ -86,9 +86,9 @@ train_loss(num_of_timesteps, train_size, train_x_new,
 #%% Decode
 
 # Folgende 3 Zeilen problematisch, weil predictions für kompletten Datensatz gemacht werden
-train_data_permuted1 = torch.permute(train_x_new, (0,3,2,1))
-predictions = cm(train_data_permuted1)  #use the CharModel
-predictions1 = predictions[:, 2:, :]
+#train_data_permuted1 = torch.permute(train_x_new, (0,3,2,1))
+#predictions = cm(train_data_permuted1)  #use the CharModel
+#predictions1 = predictions[:, 2:, :]
 # Ende problematische Zeilen
 
 # NEU: Predictions für Mini-Batches nacheinander erstellen:
